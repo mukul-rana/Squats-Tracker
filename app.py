@@ -2,10 +2,13 @@
 import cv2
 import time
 import numpy as np
+from matplotlib.figure import Figure
 import argparse
 import pandas as pd
 import math
 from flask import Flask, render_template, Response
+from io import BytesIO
+import base64
 
 def find_angle(p0,p1,c):
     if p0 == None or p1 == None or c == None: 
@@ -19,10 +22,11 @@ def find_angle(p0,p1,c):
         return None
 
 app = Flask(__name__)
+right_leg_angles = []
+left_leg_angles = []
 
 def gen_frames():
-    right_leg_angles = []
-    left_leg_angles = []
+    
     count =0
     state = False
 
@@ -36,19 +40,14 @@ def gen_frames():
 
 
 
-    MODE = "COCO"
+    
 
-    if MODE is "COCO":
-        protoFile = "D:/CODES/Python/OPENCV/POse/pose/coco/pose_deploy_linevec.prototxt"
-        weightsFile = "D:/CODES/Python/OPENCV/POse/pose/coco/pose_iter_440000.caffemodel"
-        nPoints = 18
-        POSE_PAIRS = [ [1,0],[1,2],[1,5],[2,3],[3,4],[5,6],[6,7],[1,8],[8,9],[9,10],[1,11],[11,12],[12,13],[0,14],[0,15],[14,16],[15,17]]
+    
+    protoFile = "D:/CODES/Python/OPENCV/POse/pose/coco/pose_deploy_linevec.prototxt"
+    weightsFile = "D:/CODES/Python/OPENCV/POse/pose/coco/pose_iter_440000.caffemodel"
+    nPoints = 18
+    POSE_PAIRS = [ [1,0],[1,2],[1,5],[2,3],[3,4],[5,6],[6,7],[1,8],[8,9],[9,10],[1,11],[11,12],[12,13],[0,14],[0,15],[14,16],[15,17]]
 
-    elif MODE is "MPI" :
-        protoFile = "pose/mpi/pose_deploy_linevec_faster_4_stages.prototxt"
-        weightsFile = "pose/mpi/pose_iter_160000.caffemodel"
-        nPoints = 15
-        POSE_PAIRS = [[0,1], [1,2], [2,3], [3,4], [1,5], [5,6], [6,7], [1,14], [14,8], [8,9], [9,10], [14,11], [11,12], [12,13] ]
 
 
 
@@ -57,19 +56,10 @@ def gen_frames():
     threshold = 0.1
 
 
-    input_source = args.video_file
+    
     cap = cv2.VideoCapture(0)
     hasFrame, frame = cap.read()
 
-    # n_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-
-    # vid_writer = cv2.VideoWriter(name + '_gpu.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame.shape[1],frame.shape[0]))
-
-    # widgets = ["--[INFO]-- Analyzing Video: ", progressbar.Percentage(), " ",progressbar.Bar(), " ", progressbar.ETA()]
-    # pbar = progressbar.ProgressBar(maxval = n_frames,
-    #                                widgets=widgets).start()
-
-    p =0
 
     net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
     if args.device == "cpu":
@@ -82,9 +72,7 @@ def gen_frames():
 
 
     while cv2.waitKey(1) < 0:
-        t = time.time()
         hasFrame, frame = cap.read()
-        frameCopy = np.copy(frame)
         if not hasFrame:
             cv2.waitKey()
             break
@@ -114,9 +102,6 @@ def gen_frames():
             y = (frameHeight * point[1]) / H
 
             if prob > threshold : 
-                # cv2.circle(frameCopy, (int(x), int(y)), 8, (0, 255, 255), thickness=-1, lineType=cv2.FILLED)
-                # cv2.putText(frameCopy, "{}".format(i), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, lineType=cv2.LINE_AA)
-
                 # Add the point to the list if the probability is greater than the threshold
                 points.append((int(x), int(y)))
             else :  
@@ -133,12 +118,10 @@ def gen_frames():
                 cv2.circle(frame, points[partB], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
                 
             i+=1
-        # p +=1
-        # pbar.update()
+        
         
         cv2.putText(frame, "Squats Count = {:.2f} ".format(count), (50, 50), cv2.FONT_HERSHEY_COMPLEX, .8, (0, 0, 255), 2, lineType=cv2.LINE_AA)
-        # cv2.putText(frame, "OpenPose using OpenCV", (50, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 50, 0), 2, lineType=cv2.LINE_AA)
-        # cv2.imshow('Output-Keypoints', frameCopy)
+        
 
         x = points[8]
         y = points[9]
@@ -166,23 +149,8 @@ def gen_frames():
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
         # cv2.imshow('Output-Skeleton', frame)
         print(type(frame))
-        # print( str(count)  +  " ho gaye")
-        # vid_writer.write(frame)
+        
 
-# vid_writer.release()
-
-
-# df = pd.DataFrame(np.array([left_leg_angles,right_leg_angles]).T)
-# df.to_csv(name + '_point.csv')
-
-# print(time.time()-timeTaken)
-
-
-
-# def hello():
-#     print('hellog ')
-    
-    
     
 @app.route('/')
 def index():
