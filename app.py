@@ -9,6 +9,9 @@ import math
 from flask import Flask, render_template, Response
 from io import BytesIO
 import base64
+import json
+import random
+from datetime import datetime
 
 def find_angle(p0,p1,c):
     if p0 == None or p1 == None or c == None: 
@@ -143,11 +146,19 @@ def gen_frames():
                 # print('hello g')
                 state = True
         
-        ret, buffer = cv2.imencode('.jpg', frame)
-        frame = buffer.tobytes()
-        yield (b'--frame\r\n'
-                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
-        # cv2.imshow('Output-Skeleton', frame)
+        # ret, buffer = cv2.imencode('.jpg', frame)
+        # frame = buffer.tobytes()d
+        # yield (b'--frame\r\n'
+        #         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+        
+        json_data = json.dumps(
+            {
+                "time": count,
+                "value": left,
+            }
+        )
+        yield f"data:{json_data}\n\n"
+        cv2.imshow('Output-Skeleton', frame)
         print(type(frame))
         
 
@@ -160,6 +171,24 @@ def index():
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+def generate_random_data():
+        while True:
+            json_data = json.dumps(
+                {
+                    "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "value": random.random() * 100,
+                }
+            )
+            yield f"data:{json_data}\n\n"
+            time.sleep(0.5)
+        
+
+
+@app.route("/chart-data")
+def chart_data():
+    return Response(gen_frames(), mimetype="text/event-stream")
+
+
 if __name__ == "__main__":
-    app.run(host = '192.168.225.31',debug=True)
+    app.run(host = '0.0.0.0',debug=True)
 # print( str(count) + " Squats" )
