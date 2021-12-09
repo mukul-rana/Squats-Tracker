@@ -69,10 +69,9 @@
                             labelString: 'Value'
                         },
                         ticks: {
-                            suggestedMin: 0,    // minimum will be 0, unless there is a lower value.
-                            // OR //
+                            suggestedMin: 0,    
                             suggestedMax:180,
-                            beginAtZero: true   // minimum value will be 0.
+                            beginAtZero: true   
                         }
                     }]
                 }
@@ -88,7 +87,7 @@
 
         source.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            if (config.data.labels.length === 20) {
+            if (config.data.labels.length === 40) {
                 config.data.labels.shift();
                 config.data.datasets[0].data.shift();
             }

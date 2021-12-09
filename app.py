@@ -151,13 +151,14 @@ def gen_frames():
         # yield (b'--frame\r\n'
         #         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
         
-        json_data = json.dumps(
-            {
-                "time": count,
-                "value": left,
-            }
-        )
-        yield f"data:{json_data}\n\n"
+        if left != None : 
+            json_data = json.dumps(
+                {
+                    "time": count,
+                    "value": left,
+                }
+            )
+            yield f"data:{json_data}\n\n"
         cv2.imshow('Output-Skeleton', frame)
         print(type(frame))
         
