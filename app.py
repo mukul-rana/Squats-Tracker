@@ -138,11 +138,11 @@ def gen_frames():
         left_leg_angles.append(left)
         right_leg_angles.append(right)
 
-        if right != None:
-            if state and right >100:
+        if left != None:
+            if state and left >100:
                 state= False
                 count+=1
-            elif not state and right < 100:
+            elif not state and left < 100:
                 # print('hello g')
                 state = True
         
@@ -154,8 +154,8 @@ def gen_frames():
         if left != None : 
             json_data = json.dumps(
                 {
-                    "time": count,
-                    "value": left,
+                    "count": count,
+                    "angle": left,
                 }
             )
             yield f"data:{json_data}\n\n"
@@ -176,18 +176,19 @@ def generate_random_data():
         while True:
             json_data = json.dumps(
                 {
-                    "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "value": random.random() * 100,
+                    "count": math.floor(random.random()*10),
+                    "angle": random.random() * 100,
                 }
             )
             yield f"data:{json_data}\n\n"
-            time.sleep(0.5)
+            time.sleep(1)
         
 
 
 @app.route("/chart-data")
 def chart_data():
     return Response(gen_frames(), mimetype="text/event-stream")
+    # return Response(generate_random_data(), mimetype="text/event-stream")
 
 
 if __name__ == "__main__":
