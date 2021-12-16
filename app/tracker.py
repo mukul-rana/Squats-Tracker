@@ -1,9 +1,7 @@
 import cv2
 import time
-import numpy as np
 from matplotlib.figure import Figure
 import argparse
-import pandas as pd
 import math
 import json
 from datetime import datetime
@@ -18,6 +16,7 @@ from app.auth import login_required
 from app.db import get_db
 
 bp = Blueprint('tracker', __name__)
+stopCount = False
 
 @bp.route('/')
 def index():
@@ -34,25 +33,10 @@ def index():
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
+    global stopCount
     if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
-        error = None
-
-        if not title:
-            error = 'Title is required.'
-
-        if error is not None:
-            flash(error)
-        else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO post (title, body, author_id)'
-                ' VALUES (?, ?, ?)',
-                (title, body, g.user['id'])
-            )
-            db.commit()
-            return redirect(url_for('tracker.index'))
+        stopCount = True
+        return redirect(url_for('tracker.index'))
 
     return render_template('tracker/create.html')
 
@@ -60,6 +44,9 @@ def create():
 
 @bp.route("/chart-data")
 def chart_data():
+    global stopCount
+    if stopCount:
+        stopCount =False
     return Response(gen_frames(), mimetype="text/event-stream")
 
 
@@ -85,9 +72,7 @@ def gen_frames():
     timeTaken = time.time()
     parser = argparse.ArgumentParser(description='Run keypoint detection')
     parser.add_argument("--device", default="gpu", help="Device to inference on")
-    parser.add_argument("--video_file", default= name + ".mp4", help="Input Video")
-
-    # args = parser.parse_args()
+    
     args, unknown = parser.parse_known_args()
 
 
@@ -122,8 +107,8 @@ def gen_frames():
         net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
         print("Using GPU device")
 
-
-    while cv2.waitKey(1) < 0:
+    
+    while cv2.waitKey(1) < 0 and not stopCount:
         hasFrame, frame = cap.read()
         if not hasFrame:
             cv2.waitKey()
@@ -171,9 +156,6 @@ def gen_frames():
                 
             i+=1
         
-        
-        cv2.putText(frame, "Squats Count = {:.2f} ".format(count), (50, 50), cv2.FONT_HERSHEY_COMPLEX, .8, (0, 0, 255), 2, lineType=cv2.LINE_AA)
-        
 
         x = points[8]
         y = points[9]
@@ -194,10 +176,6 @@ def gen_frames():
                 # print('hello g')
                 state = True
         
-        # ret, buffer = cv2.imencode('.jpg', frame)
-        # frame = buffer.tobytes()d
-        # yield (b'--frame\r\n'
-        #         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
         
         if left != None : 
             json_data = json.dumps(
@@ -208,3 +186,4 @@ def gen_frames():
             )
             yield f"data:{json_data}\n\n"
         cv2.imshow('Output-Skeleton', frame)
+    cv2.destroyAllWindows()
