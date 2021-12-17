@@ -17,6 +17,7 @@ from app.db import get_db
 
 bp = Blueprint('tracker', __name__)
 stopCount = False
+count=0
 
 @bp.route('/')
 def index():
@@ -36,6 +37,16 @@ def create():
     global stopCount
     if request.method == 'POST':
         stopCount = True
+
+        if count != 0:
+            db = get_db()
+            db.execute(
+                'INSERT INTO count (user_id,squat)'
+                'VALUES (?,?)',
+                (g.user['id'],count)
+            )
+            db.commit()
+            print("Commited to DB successfully")
         return redirect(url_for('tracker.index'))
 
     return render_template('tracker/create.html')
@@ -65,7 +76,8 @@ def find_angle(p0,p1,c):
 
 def gen_frames():
     
-    count =0
+    global count 
+    count=0
     state = False
 
     name = "live_cam"
