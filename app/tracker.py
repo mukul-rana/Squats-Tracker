@@ -20,15 +20,25 @@ stopCount = False
 count=0
 
 @bp.route('/')
+@login_required
 def index():
     db = get_db()
-    # posts = db.execute(
-    #     'SELECT p.id, title, body, created, author_id, username'
-    #     ' FROM post p JOIN user u ON p.author_id = u.id'
-    #     ' ORDER BY created DESC'
-    # ).fetchall()
-    posts = {}
-    return render_template('tracker/index.html', posts=posts)
+    squats = db.execute(
+        'SELECT squat,trained '
+        'FROM   count '
+        'WHERE user_id = ?',(g.user['id'],)
+    ).fetchall()
+
+    data = [[],[]]
+    for a in squats:
+        data[0].append(str(a['trained']))
+        data[1].append(a['squat'])
+        
+
+    
+    print(data)
+    
+    return render_template('tracker/index.html', data = data)
 
 
 @bp.route('/create', methods=('GET', 'POST'))
