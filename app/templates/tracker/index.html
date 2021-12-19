@@ -35,7 +35,8 @@
     var yValues = '{{data[1]}}'
     yValues= yValues.slice(1,yValues.length-1).split(", ")
     yValues = yValues.map(Number)
-
+  
+    
     
     new Chart("myChart", {
       type: "line",
@@ -52,7 +53,10 @@
       options: {
         legend: {display: false},
         scales: {
-          yAxes: [{ticks: {min: 0, max:xValues.max}}],
+          xAxes: [{ticks: {autoSkip: false,
+                    maxRotation: 70,
+                    minRotation: 70}}],
+          yAxes: [{ticks: {min: 0, max:20}}],
         }
       }
     });

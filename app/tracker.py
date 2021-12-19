@@ -1,26 +1,28 @@
 import cv2
 import time
-from matplotlib.figure import Figure
 import argparse
 import math
 import json
-from datetime import datetime
-
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for,Response
+    Blueprint, g, redirect, render_template, request, url_for,Response
 )
-from werkzeug.exceptions import abort
 
 from app.auth import login_required
 from app.db import get_db
 
+
 bp = Blueprint('tracker', __name__)
+
+
 stopCount = False
 count=0
 
+
+
+#Fetching data from database and sending it to the route
 @bp.route('/')
-@login_required
+@login_required 
 def index():
     db = get_db()
     squats = db.execute(
@@ -34,20 +36,20 @@ def index():
         data[0].append(str(a['trained']))
         data[1].append(a['squat'])
         
-
-    
-    print(data)
-    
     return render_template('tracker/index.html', data = data)
 
 
+#Route for detecting and counting squats
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
     global stopCount
+
+    #When stop button is pressed, global variable stopCount get True and Detection stops
     if request.method == 'POST':
         stopCount = True
 
+        #adding new data to database
         if count != 0:
             db = get_db()
             db.execute(
@@ -62,7 +64,7 @@ def create():
     return render_template('tracker/create.html')
 
 
-
+#This route is called by start route for real-time data streaming
 @bp.route("/chart-data")
 def chart_data():
     global stopCount
@@ -71,6 +73,7 @@ def chart_data():
     return Response(gen_frames(), mimetype="text/event-stream")
 
 
+#Finding angle between Thigh and Lower leg
 def find_angle(p0,p1,c):
     if p0 == None or p1 == None or c == None: 
         return None
@@ -90,24 +93,16 @@ def gen_frames():
     count=0
     state = False
 
-    name = "live_cam"
-    timeTaken = time.time()
     parser = argparse.ArgumentParser(description='Run keypoint detection')
     parser.add_argument("--device", default="gpu", help="Device to inference on")
     
     args, unknown = parser.parse_known_args()
 
 
-
-    
-
-    
     protoFile = "D:/CODES/Python/OPENCV/POse/pose/coco/pose_deploy_linevec.prototxt"
     weightsFile = "D:/CODES/Python/OPENCV/POse/pose/coco/pose_iter_440000.caffemodel"
     nPoints = 18
     POSE_PAIRS = [ [1,0],[1,2],[1,5],[2,3],[3,4],[5,6],[6,7],[1,8],[8,9],[9,10],[1,11],[11,12],[12,13],[0,14],[0,15],[14,16],[15,17]]
-
-
 
 
     inWidth = 368
@@ -115,7 +110,6 @@ def gen_frames():
     threshold = 0.1
 
 
-    
     cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)
     hasFrame, frame = cap.read()
 
@@ -179,23 +173,21 @@ def gen_frames():
             i+=1
         
 
-        x = points[8]
-        y = points[9]
-        z = points[10]
+        x = points[8] #waist
+        y = points[9] #left knee
+        z = points[10] #left foot
         xx = points[11]
         yy = points[12]
         zz = points[13]
-        # print(points)
         left = find_angle(x,z,y)
         right = find_angle(xx,zz,yy)
         
-
+        #Counting squats based on state
         if left != None:
             if state and left >100:
                 state= False
                 count+=1
             elif not state and left < 100:
-                # print('hello g')
                 state = True
         
         
@@ -207,5 +199,7 @@ def gen_frames():
                 }
             )
             yield f"data:{json_data}\n\n"
+            #Real-time data streaming 
+            
         cv2.imshow('Output-Skeleton', frame)
     cv2.destroyAllWindows()
