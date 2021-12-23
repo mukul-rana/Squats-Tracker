@@ -1,0 +1,87 @@
+.flex-container {
+    margin: 10px;
+    display: flex;
+    background-color: DodgerBlue;
+    border-radius: 30px;
+  }
+
+  #login{
+      background-color: white;
+    margin-left: auto;
+    width: 450px;
+  }
+  
+  .flex-container > div {
+    background-color: #f1f1f1;
+    margin: 10px;
+    /* padding: 20px; */
+    border-radius: 30px;
+    font-size: 30px;
+  }
+
+img{
+    width: 450px;
+    border-radius: 30px;
+}
+
+
+
+#main {
+    
+    width: max-content;
+    margin: 60px auto;
+    font-family: "Segoe UI", sans-serif;
+    padding: 25px 28px;
+    background: hsl(278, 100%, 48%);
+    border-radius: 30px;
+    border: 1px solid #302d2d;
+}
+h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: 400;
+    color: #e7e7e7;
+}
+.input-parent {
+    display: block;
+    margin-bottom: 20px;
+}
+label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #a4a4a4;
+}
+.input-parent input {
+    padding: 10px 8px;
+    width: 100%;
+    font-size: 16px;
+    background: #323131;
+    border: none;
+    color: #c7c7c7;
+    border-radius: 4px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+.input-parent input:hover {
+    background: #404040;
+}
+.input-parent input:focus {
+    box-shadow: 0px 0px 0px 1px #0087ff;
+}
+button {
+    padding: 10px 18px;
+    font-size: 15px;
+    background: #1a3969;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    color: #f4f4f4;
+}
+button:hover {
+    opacity: 0.9;
+}
+button:focus {
+    box-shadow: 0px 0px 0px 3px black;
+}

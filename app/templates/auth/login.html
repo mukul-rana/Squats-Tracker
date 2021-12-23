@@ -1,15 +1,30 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Log In{% endblock %}</h1>
+<link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+  <!-- <h1>{% block title %}Log In{% endblock %}</h1> -->
 {% endblock %}
 
 {% block content %}
-  <form method="post">
+  <div  class="flex-container">
+    <div><img src='../../static/sample.jpg'></div>
+
+    <div id = 'login'>
+  <form method="post" id="main">
+    <h2>Login to your account</h2>
+    
+    <div class="input-parent">
     <label for="username">Username</label>
     <input name="username" id="username" required>
+    </div>
+
+    <div class="input-parent">
     <label for="password">Password</label>
     <input type="password" name="password" id="password" required>
-    <input type="submit" value="Log In">
-  </form>
+    </div>
+
+    <button type="submit" >Log In</button>
+
+  </form></div>
+</div>
 {% endblock %}
