@@ -33,7 +33,10 @@ def index():
 
     data = [[],[]]
     for a in squats:
-        data[0].append(str(a['trained']))
+        x = a['trained']
+
+        data[0].append(x.strftime("%d") + " " + x.strftime("%b") + " "+ x.strftime("%Y") + " " + x.strftime("%X"))
+        # data[0].append()
         data[1].append(a['squat'])
         
     return render_template('tracker/index.html', data = data)

@@ -1,0 +1,39 @@
+
+canvas{
+    margin: 0 auto;
+    max-width: 800px;
+    margin-top:40px ;
+}
+
+#history{
+    height: 35px;
+    background-color: #e2b2ff;
+    margin: 5px 80px 5px 80px;
+    border-radius: 10px;
+    }
+#btn-container{
+    margin: 0 auto;
+    text-align: center;
+}
+
+button{
+    background-color: #f0d200;
+    border-radius: 10px;
+}
+    
+#start{
+    margin: 0 auto;
+    height: 50px;
+    width: 200px;
+    margin: 20px;
+    font-size: 20px;
+}
+
+#text{
+    padding: 8px;
+}
+body{
+    background-color: #fefced;
+}
+
+

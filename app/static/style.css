@@ -1,5 +1,5 @@
-html { font-family: sans-serif; background: #eee; padding: 1rem; }
-body { max-width: 65%; margin: 0 auto; background: white; }
+html { font-family: sans-serif; background-color: #e2b2ff; padding: 1rem; }
+body { max-width: 1000px; margin: 0 auto; background: white; }
 h1 { font-family: serif; color: #302d81; margin: 1rem 0; font-size: 45px;}
 a { color: #302d81; }
 hr { border: none; border-top: 1px solid lightgray; }

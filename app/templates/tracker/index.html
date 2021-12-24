@@ -1,34 +1,48 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<head>
+
   
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-</head>
-<body>
-
-  <h1>{% block title %}Posts{% endblock %}</h1>
-  {% if g.user %}
-    <a class="action" href="{{ url_for('tracker.create') }}">New</a>
-  {% endif %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='history.css') }}">
 {% endblock %}
 
 {% block content %}
-  <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+
+  <div class="chartWrapper">
+    <div class="chartAreaWrapper">
+    <canvas id="myChart" ></canvas>
+    </div>
+  </div>
+
+  {% if g.user %}
+  <div id='btn-container'>
+    <a class="action" href="{{ url_for('tracker.create') }}">
+      <button id='start'>Start Exercise</button>
+    </a>
+  </div>
+  {% endif %}
   
+  <table></table>
+    {%for i in range(data[0]|length)|reverse%}
+      <div id = 'history'> 
+        <div id='text'>
+          <div style="float: left;width: 50%;">{{data[0][i]}}      </div>
+          <div style="float: right;width: 50%;text-align: right;">  {{data[1][i]}} Squats</div>
+        </div>
+      </div>
+      
+    {%endfor%}
   <script>
     
     
     //Converting Dates String in to list of dates
     var xValues = '{{data[0]}}'
-    console.log(xValues)
-    console.log(xValues.split(', '))
     xValues= xValues.slice(1,xValues.length-1).split(", ")
     xValues = xValues.map(toDate)
     function toDate(date){
-        return date.slice(5,date.length-5)
+        return date.slice(5,date.length-18)
     }
-    console.log(xValues)
     
     
     //Converting Squats String in to list of dates
@@ -39,11 +53,12 @@
     
     
     new Chart("myChart", {
-      type: "line",
+      type: "bar",
       data: {
         labels: xValues,
         datasets: [{
-          fill: true,
+          label: "Number of Squats on a particular date",
+          fill: false,
           lineTension: 0.3,
           backgroundColor: "rgba(135,24,220,1.0)",
           borderColor: "rgba(0,0,255,0.1)",
@@ -51,15 +66,25 @@
         }]
       },
       options: {
-        legend: {display: false},
+        legend: {display: true},
         scales: {
           xAxes: [{ticks: {autoSkip: false,
                     maxRotation: 70,
-                    minRotation: 70}}],
-          yAxes: [{ticks: {min: 0, max:20}}],
+                    minRotation: 70},
+                    scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                  }],
+          yAxes: [{ticks: {min: 0, max:yValues.max},
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Squats'
+                        }
+                  }],
         }
       }
     });
     </script>
-    </body>
+    
 {% endblock %}

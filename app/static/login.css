@@ -3,20 +3,20 @@
     display: flex;
     background-color: #a767ff;
     border-radius: 30px;
+    justify-content: space-around;
+    flex-wrap: wrap;
   }
 html{
     background-color: #e2b2ff;
 }
   #login{
       background-color: #441e77;
-    margin-left: auto;
     width: 450px;
   }
   
   .flex-container > div {
     background-color: #f1f1f1;
-    margin: 10px;
-    /* padding: 20px; */
+    margin: 10px;   
     border-radius: 30px;
     font-size: 30px;
   }
@@ -29,13 +29,11 @@ img{
 
 
 #main {
-    
     width: max-content;
     margin: 60px auto;
     font-family: "Segoe UI", sans-serif;
     padding: 25px 28px;
-    background:#a767ff
-    ;
+    background:#a767ff;
     border-radius: 30px;
     border: 1px solid #302d2d;
 }
@@ -58,7 +56,7 @@ label {
 }
 .input-parent input {
     padding: 10px 8px;
-    width: 100%;
+    width: 95%;
     font-size: 16px;
     background: #441e77;
     border: none;
