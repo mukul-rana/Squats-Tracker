@@ -1,35 +1,25 @@
 {% extends 'base.html' %}
 
-{% block header %}
-  <h1>{% block title %}New Post{% endblock %}</h1>
-{% endblock %}
+
 
 {% block content %}
   
 <head>
     <meta charset="UTF-8">
-    <title>Creating Real-Time Charts with Flask</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
 </head>
 <body>
-    <form method="post">
-        <input type="submit" value="Stop">
-      </form>
-<div class="container">
-
     
-    <div class="row">
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <canvas id="canvas"></canvas>
-                </div>
-            </div>
+
+    <h1 id='count' style='text-align: center;margin: 30px;'>Squats Count : 0</h1>
+    <canvas id="canvas" style="margin: 0 auto;max-width: 700px;margin-top:40px ;"></canvas>
+    <form method="post" >
+        <div style="margin: 0 auto;text-align: center;">
+        <input type="submit" value="Stop" style="background-color: #f0d200;border-radius: 10px;height: 50px;font-size: 30px;min-width: 120px;">
         </div>
-        <div class="col">
-            <h1 id='count'>Squats Count : 0</h1>
-        </div>
-    </div>
+      </form>
+        
+    
 </div>
 <!--suppress JSUnresolvedLibraryURL -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
@@ -97,11 +87,16 @@
 
         source.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            if (config.data.labels.length === 40) {
+            if (config.data.labels.length === 60) {
                 config.data.labels.shift();
                 config.data.datasets[0].data.shift();
             }
             config.data.labels.push(data.count);
+            if(document.getElementById('count').innerHTML != "Squats Count : " + data.count){
+                var audioUrl = '../../static/alert.wav';
+                 new Audio(audioUrl).play( ); 
+            }
+
             document.getElementById('count').innerHTML = "Squats Count : " + data.count;
             config.data.datasets[0].data.push(data.angle);
             lineChart.update();

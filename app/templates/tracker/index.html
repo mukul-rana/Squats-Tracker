@@ -9,15 +9,12 @@
 
 {% block content %}
 
-  <div class="chartWrapper">
-    <div class="chartAreaWrapper">
-    <canvas id="myChart" ></canvas>
-    </div>
-  </div>
+  
+  <canvas id="myChart" ></canvas>
 
   {% if g.user %}
   <div id='btn-container'>
-    <a class="action" href="{{ url_for('tracker.create') }}">
+    <a class="action" href="{{ url_for('tracker.squats') }}">
       <button id='start'>Start Exercise</button>
     </a>
   </div>

@@ -43,9 +43,9 @@ def index():
 
 
 #Route for detecting and counting squats
-@bp.route('/create', methods=('GET', 'POST'))
+@bp.route('/squats', methods=('GET', 'POST'))
 @login_required
-def create():
+def squats():
     global stopCount
 
     #When stop button is pressed, global variable stopCount get True and Detection stops
@@ -64,7 +64,7 @@ def create():
             print("Commited to DB successfully")
         return redirect(url_for('tracker.index'))
 
-    return render_template('tracker/create.html')
+    return render_template('tracker/squats.html')
 
 
 #This route is called by start route for real-time data streaming
