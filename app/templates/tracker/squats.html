@@ -6,6 +6,7 @@
   
 <head>
     <meta charset="UTF-8">
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
 </head>
 <body>
@@ -13,15 +14,16 @@
 
     <h1 id='count' style='text-align: center;margin: 30px;'>Squats Count : 0</h1>
     <canvas id="canvas" style="margin: 0 auto;max-width: 700px;margin-top:40px ;"></canvas>
-    <form method="post" >
+    
         <div style="margin: 0 auto;text-align: center;">
-        <input type="submit" value="Stop" style="background-color: #f0d200;border-radius: 10px;height: 50px;font-size: 30px;min-width: 120px;">
+        <button id='pause'  style="background-color: #f0d200;border-radius: 10px;height: 50px;font-size: 30px;min-width: 120px;">Pause</button>
+        
         </div>
-      </form>
+      
         
     
-</div>
 <!--suppress JSUnresolvedLibraryURL -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 <!--suppress JSUnresolvedLibraryURL -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -101,6 +103,24 @@
             config.data.datasets[0].data.push(data.angle);
             lineChart.update();
         }
+
+
+
+        
+        
+        $(function() {
+          $('#pause').on('click', function(e) {
+              console.log('Hello G')
+            e.preventDefault()
+            $.getJSON('/background_process_test',
+                function(data) {
+              //do nothing
+            });
+            return false;
+          });
+        });
+
+
     });
 </script>
 </body>
