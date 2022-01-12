@@ -17,6 +17,7 @@ bp = Blueprint('tracker', __name__)
 
 stopCount = False
 count=0
+pauseButton = False
 
 
 
@@ -50,38 +51,37 @@ def squats():
 
     #When stop button is pressed, global variable stopCount get True and Detection stops
     if request.method == 'POST':
-        if request.form['submit_button'] == 'Stop':
-            print('Stop')
-        elif request.form['submit_button'] == 'Pause':
-            print('Pause')
         
-        
-        # stopCount = True
+        stopCount = True
 
-        # #adding new data to database
-        # if count != 0:
-        #     db = get_db()
-        #     db.execute(
-        #         'INSERT INTO count (user_id,squat)'
-        #         'VALUES (?,?)',
-        #         (g.user['id'],count)
-        #     )
-        #     db.commit()
-        #     print("Commited to DB successfully")
-        # return redirect(url_for('tracker.index'))
+        #adding new data to database
+        if count != 0:
+            db = get_db()
+            db.execute(
+                'INSERT INTO count (user_id,squat)'
+                'VALUES (?,?)',
+                (g.user['id'],count)
+            )
+            db.commit()
+            print("Commited to DB successfully")
+        return redirect(url_for('tracker.index'))
 
     return render_template('tracker/squats.html')
 
 
-@bp.route('/background_process_test')
-def background_process_test():
-    print ("Hello")
+@bp.route('/pause')
+def pause():
+    global pauseButton
+    pauseButton = not pauseButton
+    print ("Pause button requested")
     return ("nothing")
 
 #This route is called by start route for real-time data streaming
 @bp.route("/chart-data")
 def chart_data():
     global stopCount
+    global pauseButton
+    print('Pauseaa ' +  str(pauseButton))
     if stopCount:
         stopCount =False
     return Response(gen_frames(), mimetype="text/event-stream")
@@ -102,8 +102,11 @@ def find_angle(p0,p1,c):
 
 
 def gen_frames():
-    return
+
+    global pauseButton
     global count 
+
+    print(' 1 bar bulaate h')
     count=0
     state = False
 
@@ -139,7 +142,12 @@ def gen_frames():
 
     
     while cv2.waitKey(1) < 0 and not stopCount:
+
+        if pauseButton:
+            cv2.destroyAllWindows()
+            continue
         hasFrame, frame = cap.read()
+
         if not hasFrame:
             cv2.waitKey()
             break

@@ -14,11 +14,13 @@
 
     <h1 id='count' style='text-align: center;margin: 30px;'>Squats Count : 0</h1>
     <canvas id="canvas" style="margin: 0 auto;max-width: 700px;margin-top:40px ;"></canvas>
-    
-        <div style="margin: 0 auto;text-align: center;">
-        <button id='pause'  style="background-color: #f0d200;border-radius: 10px;height: 50px;font-size: 30px;min-width: 120px;">Pause</button>
-        
-        </div>
+
+    <div style="margin: 0 auto;text-align: center;">
+    <form method="post" >    
+    <input type="submit" value="Stop" style="background-color: #f0d200;border-radius: 10px;height: 50px;font-size: 30px;min-width: 120px;">
+    </form>
+    <button id='pause'  style="background-color: #f0d200;border-radius: 10px;height: 50px;font-size: 30px;min-width: 120px;">Pause</button>
+    </div>
       
         
     
@@ -110,11 +112,12 @@
         
         $(function() {
           $('#pause').on('click', function(e) {
-              console.log('Hello G')
+              console.log('Pause Button Pressed')
             e.preventDefault()
-            $.getJSON('/background_process_test',
+            $.getJSON('/pause',
                 function(data) {
               //do nothing
+              
             });
             return false;
           });
